@@ -3,11 +3,12 @@ package com.raymond.viper.core;
 import com.raymond.viper.model.Constants;
 import com.raymond.viper.util.MyMatrixUtils;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -60,7 +61,7 @@ public class DataHandler {
     public void getSegmaISet() {
         Set iSet = this.getISet();
         Iterator iterator = iSet.iterator();
-        RealMatrix resultMatrix = MatrixUtils.createRealMatrix(new double[Constants.DIMENSIONS][Constants.DIMENSIONS]);
+        RealMatrix resultMatrix = null;
         int index = 0;
         while (iterator.hasNext()) {
             index++;
@@ -77,20 +78,29 @@ public class DataHandler {
             RealVector vectorJ = MyMatrixUtils.convert2RealVector(bFeature, aIndex);
             RealVector vectorL = MyMatrixUtils.convert2RealVector(bFeature, bIndex);
             //calculate wij
-            double norm = vectorI.subtract(vectorJ).getL1Norm() / vectorI.subtract(vectorL).getL1Norm();
+            double vectorIJNorm = vectorI.subtract(vectorJ).getL1Norm();
+            if (vectorIJNorm == 0) {
+                continue;
+            }
+            double norm = vectorI.subtract(vectorL).getL1Norm() / vectorIJNorm;
             double wij = Math.pow(Math.E, -norm);
             //calculate matrix
             RealVector subtractVector = vectorI.subtract(vectorL);
             RealMatrix tempMatrix = MyMatrixUtils.convert2RealMatrix((ArrayRealVector) subtractVector);
             RealMatrix transposeMatrix = tempMatrix.transpose();
             RealMatrix multiplyMatrix = tempMatrix.multiply(transposeMatrix);
-            resultMatrix.add(multiplyMatrix.scalarMultiply(wij));
+            if (resultMatrix == null) {
+                resultMatrix = multiplyMatrix.scalarMultiply(wij);
+            } else {
+                resultMatrix.add(multiplyMatrix.scalarMultiply(wij));
+            }
         }
         double[][] result = resultMatrix.getData();
         StringBuilder stringBuilder = new StringBuilder();
+        NumberFormat formatter = new DecimalFormat("#0.000000");
         for (int i = 0; i < Constants.DIMENSIONS; i++) {
             for (int j = 0; j < Constants.DIMENSIONS; j++) {
-                stringBuilder.append(result[i][j] + ",");
+                stringBuilder.append(formatter.format(result[i][j]) + ",");
             }
             stringBuilder.append(System.getProperty("line.separator"));
         }
@@ -104,7 +114,7 @@ public class DataHandler {
     public void getSegmaSSet() {
         Set sSet = this.getSSet();
         Iterator iterator = sSet.iterator();
-        RealMatrix resultMatrix = MatrixUtils.createRealMatrix(new double[Constants.DIMENSIONS][Constants.DIMENSIONS]);
+        RealMatrix resultMatrix = null;
         int index = 0;
         while (iterator.hasNext()) {
             index++;
@@ -123,13 +133,18 @@ public class DataHandler {
             RealMatrix tempMatrix = MyMatrixUtils.convert2RealMatrix((ArrayRealVector) subtractVector);
             RealMatrix transposeMatrix = tempMatrix.transpose();
             RealMatrix multiplyMatrix = tempMatrix.multiply(transposeMatrix);
-            resultMatrix.add(multiplyMatrix);
+            if (resultMatrix == null) {
+                resultMatrix = multiplyMatrix;
+            } else {
+                resultMatrix.add(multiplyMatrix);
+            }
         }
         double[][] result = resultMatrix.getData();
+        NumberFormat formatter = new DecimalFormat("#0.000000");
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < Constants.DIMENSIONS; i++) {
             for (int j = 0; j < Constants.DIMENSIONS; j++) {
-                stringBuilder.append(result[i][j] + ",");
+                stringBuilder.append(formatter.format(result[i][j]) + ",");
             }
             stringBuilder.append(System.getProperty("line.separator"));
         }
