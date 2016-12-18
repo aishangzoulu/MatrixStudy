@@ -1,4 +1,4 @@
-package test;
+package test.raymond.viper;
 
 import com.raymond.viper.core.DataHandler;
 import org.junit.Test;
