@@ -3,7 +3,6 @@ package test.raymond.viper;
 import com.raymond.viper.core.DataHandler;
 import org.junit.Test;
 
-import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -12,29 +11,26 @@ import java.util.Set;
  */
 public class VIPERTest {
     @Test
-    public void testGetCollections(){
-        DataHandler dataHandler =new DataHandler();
+    public void testGetISet() {
+        DataHandler dataHandler = new DataHandler();
         Set sameSet = dataHandler.getISet();
         Iterator iterator = sameSet.iterator();
-        while(iterator.hasNext()){
+        System.out.println(sameSet.size());
+        while (iterator.hasNext()) {
             Object next = iterator.next();
             System.out.println(next.toString());
         }
-        System.out.println(sameSet.size());
     }
 
     @Test
-    public void testGetSegmaSSet(){
-        DataHandler dataHandler =new DataHandler();
-        dataHandler.calculate12();
+    public void testGetSegmaISet() {
+        DataHandler dataHandler = new DataHandler();
+        dataHandler.getSegmaISet();
     }
 
     @Test
-    public void testOutput(){
-        try (PrintWriter out = new PrintWriter("F://result.txt")) {
-            out.println("ceshi");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public void testGetSegmaSSet() {
+        DataHandler dataHandler = new DataHandler();
+        dataHandler.getSegmaSSet();
     }
 }

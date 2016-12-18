@@ -57,7 +57,7 @@ public class DataHandler {
         return iSet;
     }
 
-    public void calculate12() {
+    public void getSegmaISet() {
         Set iSet = this.getISet();
         Iterator iterator = iSet.iterator();
         RealMatrix resultMatrix = MatrixUtils.createRealMatrix(new double[Constants.DIMENSIONS][Constants.DIMENSIONS]);
@@ -94,7 +94,46 @@ public class DataHandler {
             }
             stringBuilder.append(System.getProperty("line.separator"));
         }
-        try (PrintWriter out = new PrintWriter("result.txt")) {
+        try (PrintWriter out = new PrintWriter("result_i.txt")) {
+            out.println(stringBuilder.toString());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void getSegmaSSet() {
+        Set sSet = this.getSSet();
+        Iterator iterator = sSet.iterator();
+        RealMatrix resultMatrix = MatrixUtils.createRealMatrix(new double[Constants.DIMENSIONS][Constants.DIMENSIONS]);
+        int index = 0;
+        while (iterator.hasNext()) {
+            index++;
+            if (index % 100 == 0) {
+                System.out.println(index);
+            }
+            String key = (String) iterator.next();
+            String[] temp = key.split("_");
+            int aIndex = Integer.parseInt(temp[0]);
+            double[][] aFeature = this.featureHandler.getaFeature();
+            double[][] bFeature = this.featureHandler.getbFeature();
+            RealVector vectorI = MyMatrixUtils.convert2RealVector(aFeature, aIndex);
+            RealVector vectorJ = MyMatrixUtils.convert2RealVector(bFeature, aIndex);
+            //calculate matrix
+            RealVector subtractVector = vectorI.subtract(vectorJ);
+            RealMatrix tempMatrix = MyMatrixUtils.convert2RealMatrix((ArrayRealVector) subtractVector);
+            RealMatrix transposeMatrix = tempMatrix.transpose();
+            RealMatrix multiplyMatrix = tempMatrix.multiply(transposeMatrix);
+            resultMatrix.add(multiplyMatrix);
+        }
+        double[][] result = resultMatrix.getData();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < Constants.DIMENSIONS; i++) {
+            for (int j = 0; j < Constants.DIMENSIONS; j++) {
+                stringBuilder.append(result[i][j] + ",");
+            }
+            stringBuilder.append(System.getProperty("line.separator"));
+        }
+        try (PrintWriter out = new PrintWriter("result_s.txt")) {
             out.println(stringBuilder.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
