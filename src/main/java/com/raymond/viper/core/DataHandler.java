@@ -102,6 +102,7 @@ public class DataHandler {
             for (int j = 0; j < Constants.DIMENSIONS; j++) {
                 stringBuilder.append(formatter.format(result[i][j]) + ",");
             }
+            stringBuilder.append("_");
             stringBuilder.append(System.getProperty("line.separator"));
         }
         try (PrintWriter out = new PrintWriter("result_i.txt")) {
@@ -146,6 +147,7 @@ public class DataHandler {
             for (int j = 0; j < Constants.DIMENSIONS; j++) {
                 stringBuilder.append(formatter.format(result[i][j]) + ",");
             }
+            stringBuilder.append("_");
             stringBuilder.append(System.getProperty("line.separator"));
         }
         try (PrintWriter out = new PrintWriter("result_s.txt")) {
