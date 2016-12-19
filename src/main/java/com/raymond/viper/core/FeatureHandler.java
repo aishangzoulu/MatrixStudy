@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Created by Raymond on 2016/12/18.
- * 特征矩阵
+ * import raw data into matrix
  */
 public class FeatureHandler {
     public static final char DEFAULT_QUOTE_CHARACTER = '"';

@@ -7,15 +7,13 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 import java.io.PrintWriter;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 /**
  * Created by Raymond on 2016/12/18.
- * 计算
+ * calculate Segma(S)-Segma(I)
  */
 public class DataHandler {
     private FeatureHandler featureHandler;
@@ -97,10 +95,10 @@ public class DataHandler {
         }
         double[][] result = resultMatrix.getData();
         StringBuilder stringBuilder = new StringBuilder();
-        NumberFormat formatter = new DecimalFormat("#0.000000");
+        //NumberFormat formatter = new DecimalFormat("#0.000000");
         for (int i = 0; i < Constants.DIMENSIONS; i++) {
             for (int j = 0; j < Constants.DIMENSIONS; j++) {
-                stringBuilder.append(formatter.format(result[i][j]) + ",");
+                stringBuilder.append(result[i][j] + ",");
             }
             stringBuilder.append("_");
             stringBuilder.append(System.getProperty("line.separator"));
@@ -141,11 +139,11 @@ public class DataHandler {
             }
         }
         double[][] result = resultMatrix.getData();
-        NumberFormat formatter = new DecimalFormat("#0.000000");
+        //NumberFormat formatter = new DecimalFormat("#0.000000");
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < Constants.DIMENSIONS; i++) {
             for (int j = 0; j < Constants.DIMENSIONS; j++) {
-                stringBuilder.append(formatter.format(result[i][j]) + ",");
+                stringBuilder.append(result[i][j] + ",");
             }
             stringBuilder.append("_");
             stringBuilder.append(System.getProperty("line.separator"));

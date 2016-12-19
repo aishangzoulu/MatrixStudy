@@ -8,7 +8,7 @@ import java.io.FileReader;
 
 /**
  * Created by Raymond on 2016/12/18.
- * 照片名
+ * import label data into array
  */
 public class LabelHandler {
     private String aArray[];
