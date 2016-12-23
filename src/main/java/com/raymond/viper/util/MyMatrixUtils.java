@@ -9,7 +9,7 @@ import org.apache.commons.math3.linear.RealVector;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.List;
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -66,33 +66,34 @@ public class MyMatrixUtils {
      * @return
      */
     public static double[][] getMatrixDataFromCSV(String fileName) {
-        double feature[][] = new double[Constants.DIMENSIONS][Constants.SET_SIZE];
+        double feature[][] = new double[Constants.DIMENSIONS][Constants.DIMENSIONS];
         CSVReader csvReader = null;
         try {
             ClassLoader classLoader = MyMatrixUtils.class.getClassLoader();
             File csvFile = new File(classLoader.getResource(fileName).getFile());
             csvReader = new CSVReader(new FileReader(csvFile),
                     DEFAULT_SEPARATE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
-            List<String[]> pixes = csvReader.readAll();
-            int columnIndex = 0, index = 0, rowIndex = 0;
-            while (index < pixes.size()) {
-                if (index < Constants.DIMENSIONS * (columnIndex + 1)) {
-                    String[] temp = pixes.get(index);
-                    if (temp != null && temp.length > 0) {
-                        feature[rowIndex][columnIndex] = Double.parseDouble(temp[0]);
-                    } else {
-                        feature[rowIndex][columnIndex] = 0;
+            int rowIndex = 0;
+            while (rowIndex < Constants.DIMENSIONS) {
+                String[] temp = csvReader.readNext();
+                if (temp != null && temp.length == Constants.DIMENSIONS) {
+                    for (int j = 0; j < Constants.DIMENSIONS; j++) {
+                        feature[rowIndex][j] = Double.parseDouble(temp[j]);
                     }
-                } else if (index == Constants.DIMENSIONS * (columnIndex + 1)) {
-                    rowIndex = 0;
-                    columnIndex++;
                 }
                 rowIndex++;
-                index++;
             }
             csvReader.close();
-        } catch (Exception ex) {
-
+        }catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (csvReader != null) {
+                try {
+                    csvReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return feature;
     }

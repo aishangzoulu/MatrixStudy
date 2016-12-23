@@ -56,7 +56,7 @@ public class DataHandler {
         return iSet;
     }
 
-    public void getSegmaISet() {
+    public double[][] getSegmaISet() {
         Set iSet = this.getISet();
         Iterator iterator = iSet.iterator();
         RealMatrix resultMatrix = null;
@@ -103,14 +103,15 @@ public class DataHandler {
             stringBuilder.append("_");
             stringBuilder.append(System.getProperty("line.separator"));
         }
-        try (PrintWriter out = new PrintWriter("result_i.txt")) {
+        try (PrintWriter out = new PrintWriter("result_pca_i.txt")) {
             out.println(stringBuilder.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return result;
     }
 
-    public void getSegmaSSet() {
+    public double[][] getSegmaSSet() {
         Set sSet = this.getSSet();
         Iterator iterator = sSet.iterator();
         RealMatrix resultMatrix = null;
@@ -148,10 +149,11 @@ public class DataHandler {
             stringBuilder.append("_");
             stringBuilder.append(System.getProperty("line.separator"));
         }
-        try (PrintWriter out = new PrintWriter("result_s.txt")) {
+        try (PrintWriter out = new PrintWriter("result_pca_s.txt")) {
             out.println(stringBuilder.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return result;
     }
 }

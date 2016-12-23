@@ -1,6 +1,8 @@
 package test.raymond.viper;
 
 import com.raymond.viper.core.DataHandler;
+import com.raymond.viper.core.Main;
+import com.raymond.viper.core.TestHandler;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -32,5 +34,25 @@ public class VIPERTest {
     public void testGetSegmaSSet() {
         DataHandler dataHandler = new DataHandler();
         dataHandler.getSegmaSSet();
+    }
+
+    @Test
+    public void testGetLMatrix() {
+        TestHandler testHandler = new TestHandler(false);
+        double[][] lMatrix = testHandler.getLMatrix();
+        System.out.println(lMatrix.length);
+    }
+
+    @Test
+    public void testFinalAccuracy() {
+        Main main = new Main();
+        main.main(null);
+    }
+
+    @Test
+    public void testTestAccuracy() {
+        TestHandler testHandler = new TestHandler();
+        double accuracy = testHandler.testAccuracy();
+        System.out.println(accuracy);
     }
 }

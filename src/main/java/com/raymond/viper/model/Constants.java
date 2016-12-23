@@ -5,5 +5,5 @@ package com.raymond.viper.model;
  */
 public class Constants {
     public static int SET_SIZE = 632;
-    public static int DIMENSIONS = 5138;
+    public static int DIMENSIONS = 1000;//5138
 }

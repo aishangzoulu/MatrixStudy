@@ -2,6 +2,9 @@ package com.raymond.viper.core;
 
 import com.opencsv.CSVReader;
 import com.raymond.viper.model.Constants;
+import com.raymond.viper.util.MyMatrixUtils;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import java.io.File;
 import java.io.FileReader;
@@ -20,57 +23,38 @@ public class FeatureHandler {
     private double bFeature[][];
 
     public FeatureHandler() {
-        aFeature = new double[Constants.DIMENSIONS][Constants.SET_SIZE];
-        bFeature = new double[Constants.DIMENSIONS][Constants.SET_SIZE];
+        aFeature= this.getMatrixDataFromCSV("VIPER/pca/1000/pca_a.csv");
+        bFeature= this.getMatrixDataFromCSV("VIPER/pca/1000/pca_b.csv");
+        //aFeature=this.createFeatureMatrix("VIPER/csv/VIPeR_cam_a.csv");
+        //bFeature=this.createFeatureMatrix("VIPER/csv/VIPeR_cam_b.csv");
+    }
+
+    /**
+     * get matrixData from file
+     *
+     * @param fileName relative to resource
+     * @return
+     */
+    public double[][] getMatrixDataFromCSV(String fileName) {
+        double feature[][] = new double[Constants.SET_SIZE][Constants.DIMENSIONS];
         CSVReader csvReader = null;
         try {
-            ClassLoader classLoader = this.getClass().getClassLoader();
-            File csvFile = new File(classLoader.getResource("VIPER/csv/VIPeR_cam_a.csv").getFile());
+            ClassLoader classLoader = MyMatrixUtils.class.getClassLoader();
+            File csvFile = new File(classLoader.getResource(fileName).getFile());
             csvReader = new CSVReader(new FileReader(csvFile),
                     DEFAULT_SEPARATE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
-            List<String[]> pixes = csvReader.readAll();
-            int columnIndex = 0, index = 0, rowIndex = 0;
-            while (index < pixes.size()) {
-                if (index < Constants.DIMENSIONS * (columnIndex + 1)) {
-                    String[] temp = pixes.get(index);
-                    if (temp != null && temp.length > 0) {
-                        aFeature[rowIndex][columnIndex] = Double.parseDouble(temp[0]);
-                    } else {
-                        aFeature[rowIndex][columnIndex] = 0;
+            int rowIndex = 0;
+            while (rowIndex < Constants.SET_SIZE) {
+                String[] temp = csvReader.readNext();
+                if (temp != null && temp.length == Constants.DIMENSIONS) {
+                    for (int j = 0; j < Constants.DIMENSIONS; j++) {
+                        feature[rowIndex][j] = Double.parseDouble(temp[j]);
                     }
-                } else if (index == Constants.DIMENSIONS * (columnIndex + 1)) {
-                    rowIndex = 0;
-                    columnIndex++;
                 }
                 rowIndex++;
-                index++;
             }
             csvReader.close();
-
-            csvFile = new File(classLoader.getResource("VIPER/csv/VIPeR_cam_b.csv").getFile());
-            csvReader = new CSVReader(new FileReader(csvFile),
-                    DEFAULT_SEPARATE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
-            pixes = csvReader.readAll();
-            columnIndex = 0;
-            index = 0;
-            rowIndex = 0;
-            while (index < pixes.size()) {
-                if (index < Constants.DIMENSIONS * (columnIndex + 1)) {
-                    String[] temp = pixes.get(index);
-                    if (temp != null && temp.length > 0) {
-                        bFeature[rowIndex][columnIndex] = Double.parseDouble(temp[0]);
-                    } else {
-                        bFeature[rowIndex][columnIndex] = 0;
-                    }
-                } else if (index == Constants.DIMENSIONS * (columnIndex + 1)) {
-                    rowIndex = 0;
-                    columnIndex++;
-                }
-                rowIndex++;
-                index++;
-            }
-            csvReader.close();
-        } catch (IOException e) {
+        }catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (csvReader != null) {
@@ -81,6 +65,48 @@ public class FeatureHandler {
                 }
             }
         }
+        RealMatrix realMatrix= MatrixUtils.createRealMatrix(feature);
+        return realMatrix.transpose().getData();
+    }
+
+    public double[][] createFeatureMatrix(String fileName){
+        double[][] feature = new double[Constants.DIMENSIONS][Constants.SET_SIZE];
+        CSVReader csvReader = null;
+        try {
+            ClassLoader classLoader = this.getClass().getClassLoader();
+            File csvFile = new File(classLoader.getResource(fileName).getFile());
+            csvReader = new CSVReader(new FileReader(csvFile),
+                    DEFAULT_SEPARATE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
+            List<String[]> pixes = csvReader.readAll();
+            int columnIndex = 0, index = 0, rowIndex = 0;
+            while (index < pixes.size()) {
+                if (index < Constants.DIMENSIONS * (columnIndex + 1)) {
+                    String[] temp = pixes.get(index);
+                    if (temp != null && temp.length > 0) {
+                        feature[rowIndex][columnIndex] = Double.parseDouble(temp[0]);
+                    } else {
+                        feature[rowIndex][columnIndex] = 0;
+                    }
+                } else if (index == Constants.DIMENSIONS * (columnIndex + 1)) {
+                    rowIndex = 0;
+                    columnIndex++;
+                }
+                rowIndex++;
+                index++;
+            }
+            csvReader.close();
+        }catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (csvReader != null) {
+                try {
+                    csvReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return feature;
     }
 
     public double[][] getaFeature() {
